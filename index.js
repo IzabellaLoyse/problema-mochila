@@ -36,7 +36,24 @@ const gerarSorteioDaMochila = () => {
   }
 };
 
-const geraSolucaoDoSorteio = () => {
+const pegarBeneficioDosObjetos = () => {
+  listaObjetosSorteio.filter((objeto, index) =>
+    objeto === 1 ? mochilaComObjetos.push(index) : null,
+  );
+
+  const listaBeneficio = mochilaComObjetos.map(
+    (objeto) => beneficioDoObjeto[objeto],
+  );
+
+  const beneficioTotalDaMochila = listaBeneficio.reduce(
+    (total, beneficio) => total + beneficio,
+    0,
+  );
+
+  return beneficioTotalDaMochila;
+};
+
+const gerarSolucaoDoSorteio = () => {
   const alertaMochilaCheia = document.querySelector('.objects');
   let exibeMensagemMochilaCheia;
   let pesoTotalDaMochila;
@@ -64,13 +81,11 @@ const geraSolucaoDoSorteio = () => {
 };
 
 const refinamentoVizinhoDoSorteio = () => {
+  const alertaMochilaCheia = document.querySelector('.refinamento');
   const mochilaComObjetosRefinamento = [];
   let listaSorteioRefinamento = [];
-  let pesoTotalDaMochilaRefinamento;
-
-  // sortear os indices da listaObjetosSorteio para que os indices tenham novas posições
-
-  // pegar listaObjetosSorteio, sortear os indices e colocar em listaSorteioRefinamento
+  let beneficioTotalDaMochilaRefinamento;
+  let exibeMensagemMochilaCheia;
 
   listaObjetosSorteio.map((objeto, index) => {
     const sorteio = Math.floor(Math.random() * 2);
@@ -84,17 +99,48 @@ const refinamentoVizinhoDoSorteio = () => {
     }
   });
 
-  // pegar listaSorteioRefinamento e colocar os indices que forem 1 em mochilaComObjetosRefinamento
+  listaSorteioRefinamento.filter((objeto, index) =>
+    objeto === 1 ? mochilaComObjetosRefinamento.push(index) : null,
+  );
 
-  console.log(listaObjetosSorteio);
-  console.log(listaSorteioRefinamento);
-  // verificar se o peso da mochila é maior que a capacidade
+  const listaBeneficio = mochilaComObjetosRefinamento.map(
+    (objeto) => beneficioDoObjeto[objeto],
+  );
+
+  beneficioTotalDaMochilaRefinamento = listaBeneficio.reduce(
+    (total, beneficio) => total + beneficio,
+    0,
+  );
+
+  if (beneficioTotalDaMochilaRefinamento > capacidadeDaMochila) {
+    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = `
+      <p class="js-alert-mochila">
+      🚨 A mochila está cheia 🚨
+      </p> 
+      `;
+    beneficioTotalDaMochilaRefinamento =
+      beneficioTotalDaMochilaRefinamento * -1;
+  } else {
+    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = '';
+  }
 
   informandoEmTelaRefinamento(
     listaSorteioRefinamento,
     mochilaComObjetosRefinamento,
-    pesoTotalDaMochilaRefinamento,
+    beneficioTotalDaMochilaRefinamento,
+    exibeMensagemMochilaCheia,
   );
+};
+
+const heuristicaDaSubida = () => {
+  let melhorVizinho = listaObjetosSorteio;
+  let melhorVizinhoBeneficio = pegarBeneficioDosObjetos();
+
+  // sorteio da mochila - listaObjetosSorteio
+  // calculo total do beneficio do lista...
+  //melhorVizinho = listaObjetosSorteio
+  // vou gerar um vizinho do melhor vizinho
+  // alterando o sorteio dos indices
 };
 
 const informandoValoresEmTela = (
@@ -146,6 +192,7 @@ const informandoEmTelaRefinamento = (
   listaObjetosSorteio,
   mochilaComObjetos,
   pesoTotalDaMochila,
+  exibeMensagemMochilaCheia,
 ) => {
   const divRefinamento = document.querySelector('.refinamento');
 
@@ -180,14 +227,17 @@ const informandoEmTelaRefinamento = (
     <hr />
 
     <p>
-      Peso total da mochila:
+     Beneficio total da mochila:
       <span>${pesoTotalDaMochila}</span>
     </p>
 
+    
+    ${exibeMensagemMochilaCheia}
 `;
 };
 
 inserindoOsObjetos();
 gerarSorteioDaMochila();
-geraSolucaoDoSorteio();
+gerarSolucaoDoSorteio();
+pegarBeneficioDosObjetos();
 refinamentoVizinhoDoSorteio();
