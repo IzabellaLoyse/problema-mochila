@@ -10,6 +10,11 @@ const inserindoOsObjetos = () => {
   quantidadeDeObjetos = parseInt(prompt('Insira a quantidade de objetos'));
   capacidadeDaMochila = parseInt(prompt('Insira a capacidade da mochila'));
 
+  if (Number.isNaN(quantidadeDeObjetos) || Number.isNaN(capacidadeDaMochila)) {
+    alert('Por favor, insira apenas números!');
+    inserindoOsObjetos();
+  }
+
   for (let i = 0; i <= quantidadeDeObjetos - 1; i++) {
     let listaPesoDosObjetos = parseInt(prompt('Insira o peso do objeto: ' + i));
 
@@ -45,10 +50,14 @@ const pegarBeneficioDosObjetos = () => {
     (objeto) => beneficioDoObjeto[objeto],
   );
 
-  const beneficioTotalDaMochila = listaBeneficio.reduce(
+  let beneficioTotalDaMochila = listaBeneficio.reduce(
     (total, beneficio) => total + beneficio,
     0,
   );
+
+  if (beneficioTotalDaMochila > capacidadeDaMochila) {
+    beneficioTotalDaMochila = beneficioTotalDaMochila * -1;
+  }
 
   return beneficioTotalDaMochila;
 };
@@ -84,20 +93,27 @@ const refinamentoVizinhoDoSorteio = () => {
   const alertaMochilaCheia = document.querySelector('.refinamento');
   const mochilaComObjetosRefinamento = [];
   let listaSorteioRefinamento = [];
+
   let beneficioTotalDaMochilaRefinamento;
   let exibeMensagemMochilaCheia;
 
-  listaObjetosSorteio.map((objeto, index) => {
-    const sorteio = Math.floor(Math.random() * 2);
-
-    if (sorteio === 0) {
-      listaSorteioRefinamento[index] = 0;
-    }
-
-    if (sorteio === 1) {
-      listaSorteioRefinamento[index] = 1;
-    }
+  listaObjetosSorteio.map((objeto) => {
+    listaSorteioRefinamento.push(objeto);
   });
+
+  const pegarValorAleatorioArray = Math.floor(
+    Math.random() * listaSorteioRefinamento.length,
+  );
+
+  if (listaSorteioRefinamento[pegarValorAleatorioArray] === 1) {
+    listaSorteioRefinamento[pegarValorAleatorioArray] = 0;
+  }
+
+  if (listaSorteioRefinamento[pegarValorAleatorioArray] === 0) {
+    listaSorteioRefinamento[pegarValorAleatorioArray] = 1;
+  }
+
+  console.log(listaSorteioRefinamento[pegarValorAleatorioArray]);
 
   listaSorteioRefinamento.filter((objeto, index) =>
     objeto === 1 ? mochilaComObjetosRefinamento.push(index) : null,
@@ -130,17 +146,33 @@ const refinamentoVizinhoDoSorteio = () => {
     beneficioTotalDaMochilaRefinamento,
     exibeMensagemMochilaCheia,
   );
+
+  return beneficioTotalDaMochilaRefinamento;
 };
 
 const heuristicaDaSubida = () => {
-  let melhorVizinho = listaObjetosSorteio;
-  let melhorVizinhoBeneficio = pegarBeneficioDosObjetos();
+  const vizinhoRefinamento = refinamentoVizinhoDoSorteio();
+  const melhorVizinho = pegarBeneficioDosObjetos();
+  let vizinho;
 
-  // sorteio da mochila - listaObjetosSorteio
-  // calculo total do beneficio do lista...
-  //melhorVizinho = listaObjetosSorteio
-  // vou gerar um vizinho do melhor vizinho
-  // alterando o sorteio dos indices
+  console.log(vizinhoRefinamento);
+  console.log(melhorVizinho);
+
+  if (vizinhoRefinamento > melhorVizinho) {
+    vizinho = vizinhoRefinamento;
+  } else {
+    vizinho = melhorVizinho;
+  }
+  console.log(vizinho);
+  // em um loop gerar novo vizinho e comparar com o melhor vizinho
+  // se o novo vizinho for melhor que o melhor vizinho, o melhor vizinho recebe o novo vizinho e para o loop
+  // se o novo vizinho for pior que o melhor vizinho, o loop continua ate que o novo vizinho seja melhor que o melhor vizinho
+
+  // informandoEmTelaHeuristicaDaSubida(
+  //   melhorVizinho,
+  //   melhorVizinhoBeneficio,
+  //   vizinhosComBeneficiosMenores,
+  // );
 };
 
 const informandoValoresEmTela = (
@@ -236,8 +268,23 @@ const informandoEmTelaRefinamento = (
 `;
 };
 
+const informandoEmTelaHeuristicaDaSubida = (
+  melhorVizinho,
+  melhorVizinhoBeneficio,
+  vizinhosComBeneficiosMenores,
+) => {
+  const divSubida = document.querySelector('.subida');
+
+  divSubida.innerHTML = `
+  <p>Melhor Vizinho: <span>${melhorVizinho} </p>
+  <p>Vizinho beneficio: <span>${melhorVizinhoBeneficio} </p>
+  <p>Vizinhos com beneficio gerados: <span>${vizinhosComBeneficiosMenores} </p>
+  `;
+};
+
 inserindoOsObjetos();
 gerarSorteioDaMochila();
 gerarSolucaoDoSorteio();
 pegarBeneficioDosObjetos();
 refinamentoVizinhoDoSorteio();
+heuristicaDaSubida();
