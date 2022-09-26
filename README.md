@@ -1,7 +1,7 @@
 # 🎒 Problema da Mochila
 
-Exercício proposto pela disciplina de Inteligência Computacional - Sistemas de Informação 
-O objetivo do exercício é criar uma solução para o Problema da Mochila e com base nisso aplicar as heurísticas de construção.
+- Exercício proposto pela disciplina de Inteligência Computacional - Sistemas de Informação 
+- O objetivo do exercício é criar uma solução para o Problema da Mochila e com base nisso aplicar as heurísticas de construção.
 
 ## 💡 Heurísticas 
 - Refinamento
