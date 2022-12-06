@@ -4,7 +4,9 @@ let capacidadeDaMochila;
 let pesoDoObjeto = [];
 let beneficioDoObjeto = [];
 let listaObjetosSorteio = [];
+let novaListaObjetosSorteio = listaObjetosSorteio;
 let mochilaComObjetos = [];
+let mochilaDosVizinhosComObjetos = [];
 
 const inserindoOsObjetos = () => {
   quantidadeDeObjetos = parseInt(prompt('Insira a quantidade de objetos'));
@@ -18,12 +20,12 @@ const inserindoOsObjetos = () => {
   for (let i = 0; i <= quantidadeDeObjetos - 1; i++) {
     let listaPesoDosObjetos = parseInt(prompt('Insira o peso do objeto: ' + i));
 
-    let listaBeneficioDosObjetos = parseInt(
+    let listageraBeneficioDosObjetos = parseInt(
       prompt('Insira o beneficio do objeto: ' + i),
     );
 
     pesoDoObjeto.push(listaPesoDosObjetos);
-    beneficioDoObjeto.push(listaBeneficioDosObjetos);
+    beneficioDoObjeto.push(listageraBeneficioDosObjetos);
   }
 };
 
@@ -41,16 +43,16 @@ const gerarSorteioDaMochila = () => {
   }
 };
 
-const pegarBeneficioDosObjetos = () => {
-  listaObjetosSorteio.filter((objeto, index) =>
-    objeto === 1 ? mochilaComObjetos.push(index) : null,
+const geraBeneficioDosObjetos = (mochila = mochilaComObjetos) => {
+  let beneficioTotalDaMochila;
+
+  listaSorteio.filter((objeto, index) =>
+    objeto === 1 ? mochila.push(index) : null,
   );
 
-  const listaBeneficio = mochilaComObjetos.map(
-    (objeto) => beneficioDoObjeto[objeto],
-  );
+  const listaBeneficio = mochila.map((objeto) => beneficioDoObjeto[objeto]);
 
-  let beneficioTotalDaMochila = listaBeneficio.reduce(
+  beneficioTotalDaMochila = listaBeneficio.reduce(
     (total, beneficio) => total + beneficio,
     0,
   );
@@ -62,16 +64,13 @@ const pegarBeneficioDosObjetos = () => {
   return beneficioTotalDaMochila;
 };
 
-const gerarSolucaoDoSorteio = () => {
-  const alertaMochilaCheia = document.querySelector('.objects');
-  let exibeMensagemMochilaCheia;
+const geraPesoDosObjetos = (mochila = mochilaComObjetos) => {
+  const alertaMochilaCheia = document.querySelector('.js-mensagemErro');
   let pesoTotalDaMochila;
 
-  listaObjetosSorteio.filter((objeto, index) =>
-    objeto === 1 ? mochilaComObjetos.push(index) : null,
-  );
-
-  const listaPeso = mochilaComObjetos.map((objeto) => pesoDoObjeto[objeto]);
+  const listaPeso = mochila.map((objeto) => {
+    return pesoDoObjeto[objeto];
+  });
 
   pesoTotalDaMochila = listaPeso.reduce((total, peso) => total + peso, 0);
 
@@ -86,31 +85,32 @@ const gerarSolucaoDoSorteio = () => {
     exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = '';
   }
 
-  informandoValoresEmTela(pesoTotalDaMochila, exibeMensagemMochilaCheia);
+  exibeResultadoDaMochila(mochila, pesoTotalDaMochila);
+
+  return pesoTotalDaMochila;
 };
 
 const refinamentoVizinhoDoSorteio = () => {
-  const alertaMochilaCheia = document.querySelector('.refinamento');
-  const mochilaComObjetosRefinamento = [];
-  let listaSorteioRefinamento = [];
+  const alertaMochilaCheia = document.querySelector(
+    '.js-mensagemErroRefinamento',
+  );
 
   let beneficioTotalDaMochilaRefinamento;
-  let exibeMensagemMochilaCheia;
+  const mochilaComObjetosRefinamento = [];
+  const listaSorteioRefinamento = [];
 
   listaObjetosSorteio.map((objeto) => {
     listaSorteioRefinamento.push(objeto);
   });
 
-  const pegarValorAleatorioArray = Math.floor(
+  const geraSorteioPosicao = Math.floor(
     Math.random() * listaSorteioRefinamento.length,
   );
 
-  if (listaSorteioRefinamento[pegarValorAleatorioArray] === 1) {
-    listaSorteioRefinamento[pegarValorAleatorioArray] = 0;
-  }
-
-  if (listaSorteioRefinamento[pegarValorAleatorioArray] === 0) {
-    listaSorteioRefinamento[pegarValorAleatorioArray] = 1;
+  if (listaSorteioRefinamento[geraSorteioPosicao] === 1) {
+    listaSorteioRefinamento[geraSorteioPosicao] = 0;
+  } else {
+    listaSorteioRefinamento[geraSorteioPosicao] = 1;
   }
 
   listaSorteioRefinamento.filter((objeto, index) =>
@@ -130,7 +130,7 @@ const refinamentoVizinhoDoSorteio = () => {
     exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = `
       <p class="js-alert-mochila">
       🚨 A mochila está cheia 🚨
-      </p> 
+      </p>
       `;
     beneficioTotalDaMochilaRefinamento =
       beneficioTotalDaMochilaRefinamento * -1;
@@ -138,198 +138,116 @@ const refinamentoVizinhoDoSorteio = () => {
     exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = '';
   }
 
-  informandoEmTelaRefinamento(
+  exibeResultadosMochilaRefinamento(
     listaSorteioRefinamento,
     mochilaComObjetosRefinamento,
     beneficioTotalDaMochilaRefinamento,
-    exibeMensagemMochilaCheia,
   );
-
-  return beneficioTotalDaMochilaRefinamento;
 };
 
-const criarNovosVizinhos = () => {
-  const listaDeNovosVizinhos = [];
-  const mochilaComObjetosDosNovosVizinhos = [];
+const geraNovosVizinhos = (vizinho) => {
+  const geraSorteioPosicao = Math.floor(Math.random() * vizinho.length);
 
-  listaObjetosSorteio.map((objeto) => {
-    listaDeNovosVizinhos.push(objeto);
-  });
-
-  const pegarValorAleatorioArray = Math.floor(
-    Math.random() * listaDeNovosVizinhos.length,
-  );
-
-  if (listaDeNovosVizinhos[pegarValorAleatorioArray] === 1) {
-    listaDeNovosVizinhos[pegarValorAleatorioArray] = 0;
+  if (vizinho[geraSorteioPosicao] === 1) {
+    vizinho[geraSorteioPosicao] = 0;
+  } else {
+    vizinho[geraSorteioPosicao] = 1;
   }
 
-  if (listaDeNovosVizinhos[pegarValorAleatorioArray] === 0) {
-    listaDeNovosVizinhos[pegarValorAleatorioArray] = 1;
-  }
-
-  listaDeNovosVizinhos.filter((objeto, index) =>
-    objeto === 1 ? mochilaComObjetosDosNovosVizinhos.push(index) : null,
-  );
-
-  const listaBeneficio = mochilaComObjetosDosNovosVizinhos.map(
-    (objeto) => beneficioDoObjeto[objeto],
-  );
-
-  let beneficioTotalDaMochilaDosNovosVizinhos = listaBeneficio.reduce(
-    (total, beneficio) => total + beneficio,
-    0,
-  );
-
-  if (beneficioTotalDaMochilaDosNovosVizinhos > capacidadeDaMochila) {
-    beneficioTotalDaMochilaDosNovosVizinhos =
-      beneficioTotalDaMochilaDosNovosVizinhos * -1;
-  }
-
-  return beneficioTotalDaMochilaDosNovosVizinhos;
+  return vizinho;
 };
 
 const heuristicaDaSubida = () => {
-  const beneficioTotalVizinhoRefinamento = refinamentoVizinhoDoSorteio();
-  const beneficioTotalDosVizinhos = pegarBeneficioDosObjetos();
-  let beneficioTotalDosNovosVizinhos = criarNovosVizinhos();
-  let melhorVizinho;
-  let novoVizinho;
+  let paradas = 0;
 
-  let subida = true;
-  let tempo = 0;
+  for (let i = 0; i < 3; i++) {}
 
-  while (subida) {
-    if (beneficioTotalVizinhoRefinamento > beneficioTotalDosVizinhos) {
-      melhorVizinho = beneficioTotalVizinhoRefinamento;
+  for (let i = 0; i < 3; i++) {
+    let vizinho = geraNovosVizinhos(listaObjetosSorteio);
+    let pesoTotalDoVizinho = geraPesoDosObjetos(mochilaDosVizinhosComObjetos);
+
+    if (pesoTotalDoVizinho > capacidadeDaMochila) {
+      i += 1;
     } else {
-      melhorVizinho = beneficioTotalDosVizinhos;
-    }
+      paradas = 0;
 
-    if (melhorVizinho > beneficioTotalDosNovosVizinhos) {
-      subida = false;
-      tempo = 0;
-      novoVizinho = melhorVizinho;
-    } else {
-      tempo++;
-      subida = true;
-      novoVizinho = beneficioTotalDosNovosVizinhos;
-    }
+      let beneficioListaObjetos = geraBeneficioDosObjetos(mochilaComObjetos);
+      let beneficioVizinho = geraBeneficioDosObjetos(
+        mochilaDosVizinhosComObjetos,
+      );
 
-    if (tempo === 3) {
-      subida = false;
+      if (beneficioVizinho > beneficioListaObjetos) {
+        novaListaObjetosSorteio = vizinho;
+        console.log(
+          '🚀 ~ file: index.js:182 ~ heuristicaDaSubida ~ vizinho',
+          vizinho,
+        );
+      }
     }
   }
-
-  informandoEmTelaHeuristicaDaSubida(melhorVizinho, novoVizinho);
 };
 
-const informandoValoresEmTela = (
-  pesoTotalDaMochila,
-  exibeMensagemMochilaCheia,
-) => {
-  const divObjetos = document.querySelector('.objects');
+const exibeResultadoDaMochila = (mochilaObjetos, pesoTotal) => {
+  document.querySelector(
+    '#js-qtdObjetos',
+  ).textContent = `${quantidadeDeObjetos}`;
 
-  divObjetos.innerHTML = `
-  <p>
-      Quantidade de Objetos na mochila: <span> ${quantidadeDeObjetos} </span>
-    </p>
-    <p>
-      Capacidade da mochila:
-      <span>${capacidadeDaMochila}</span>
-    </p>
-    <hr />
+  document.querySelector(
+    '#js-capacidadeMochila',
+  ).textContent = `${capacidadeDaMochila}`;
 
-    <p>
-      Peso dos objetos da mochila:
-      <span>${pesoDoObjeto}</span>
-    </p>
-    <p>
-      Beneficio dos objetos da mochila:
-      <span> ${beneficioDoObjeto}</span>
-    </p>
-    <hr />
+  document.querySelector('#js-pesoObjetos').textContent = `${pesoDoObjeto}`;
 
-    <p>
-      Lista de objetos do sorteio:
-      <span>${listaObjetosSorteio}</span>
-    </p>
-    <p>
-      Índice dos objetos do sorteio:
-      <span>${mochilaComObjetos}</span>
-    </p>
-    <hr />
+  document.querySelector(
+    '#js-beneficioObjetos',
+  ).textContent = `${beneficioDoObjeto}`;
 
-    <p>
-      Peso total da mochila:
-      <span>${pesoTotalDaMochila}</span>
-    </p>
+  document.querySelector(
+    '#js-objetosSorteio',
+  ).textContent = `${listaObjetosSorteio}`;
 
-    ${exibeMensagemMochilaCheia}
-  `;
+  document.querySelector('#js-indiceObjetos').textContent = `${mochilaObjetos}`;
+
+  document.querySelector('#js-pesoTotalMochila').textContent = `${pesoTotal}`;
 };
 
-const informandoEmTelaRefinamento = (
+const exibeResultadosMochilaRefinamento = (
   listaObjetosSorteio,
   mochilaComObjetos,
-  pesoTotalDaMochila,
-  exibeMensagemMochilaCheia,
+  beneficioTotalDaMochila,
 ) => {
-  const divRefinamento = document.querySelector('.refinamento');
+  document.querySelector(
+    '#js-qtdObjetosRefinamento',
+  ).textContent = `${quantidadeDeObjetos}`;
 
-  divRefinamento.innerHTML = `
-  <p>
-      Quantidade de Objetos na mochila: <span> ${quantidadeDeObjetos} </span>
-    </p>
-    <p>
-      Capacidade da mochila:
-      <span>${capacidadeDaMochila}</span>
-    </p>
-    <hr />
+  document.querySelector(
+    '#js-capacidadeMochilaRefinamento',
+  ).textContent = `${capacidadeDaMochila}`;
 
-    <p>
-      Peso dos objetos da mochila:
-      <span>${pesoDoObjeto}</span>
-    </p>
-    <p>
-      Beneficio dos objetos da mochila:
-      <span> ${beneficioDoObjeto}</span>
-    </p>
-    <hr />
+  document.querySelector(
+    '#js-pesoObjetosRefinamento',
+  ).textContent = `${pesoDoObjeto}`;
 
-    <p>
-      Lista de objetos do sorteio:
-      <span>${listaObjetosSorteio}</span>
-    </p>
-    <p>
-      Índice dos objetos do sorteio:
-      <span>${mochilaComObjetos}</span>
-    </p>
-    <hr />
+  document.querySelector(
+    '#js-beneficioObjetosRefinamento',
+  ).textContent = `${beneficioDoObjeto}`;
 
-    <p>
-     Beneficio total da mochila:
-      <span>${pesoTotalDaMochila}</span>
-    </p>
+  document.querySelector(
+    '#js-objetosSorteioRefinamento',
+  ).textContent = `${listaObjetosSorteio}`;
 
-    
-    ${exibeMensagemMochilaCheia}
-`;
-};
+  document.querySelector(
+    '#js-indiceObjetosRefinamento',
+  ).textContent = `${mochilaComObjetos}`;
 
-const informandoEmTelaHeuristicaDaSubida = (melhorVizinho, novoVizinho) => {
-  const divSubida = document.querySelector('.subida');
-
-  divSubida.innerHTML = `
-  <p>Melhor Vizinho da solução: <span>${melhorVizinho} </p>
-  <p>Novo Vizinho: <span>${novoVizinho} </p>
-  `;
+  document.querySelector(
+    '#js-beneficioTotalRefinamento',
+  ).textContent = `${beneficioTotalDaMochila}`;
 };
 
 inserindoOsObjetos();
 gerarSorteioDaMochila();
-gerarSolucaoDoSorteio();
-pegarBeneficioDosObjetos();
+geraBeneficioDosObjetos();
+geraPesoDosObjetos();
+//heuristicaDaSubida();
 refinamentoVizinhoDoSorteio();
-criarNovosVizinhos();
-heuristicaDaSubida();
