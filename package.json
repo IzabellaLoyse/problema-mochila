@@ -1,0 +1,24 @@
+{
+  "name": "problema-mochila",
+  "version": "1.0.0",
+  "description": "- Exercício proposto pela disciplina de Inteligência Computacional - Sistemas de Informação\r - O objetivo do exercício é criar uma solução para o Problema da Mochila e com base nisso aplicar as heurísticas de construção.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/js/script.js "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IzabellaLoyse/problema-mochila.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IzabellaLoyse/problema-mochila/issues"
+  },
+  "homepage": "https://github.com/IzabellaLoyse/problema-mochila#readme",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
+}

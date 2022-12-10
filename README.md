@@ -9,6 +9,11 @@
 - Da subida
 - GRASP
 
+## 📌 Versões da aplicação
+
+- Em NodeJS: **script.js**
+- Web: **index.js**
+
 ## 👥 Integrantes
 
 - Izabella Loyse - 8º Período
