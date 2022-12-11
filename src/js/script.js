@@ -214,8 +214,8 @@ const heuristicaDaSubida = () => {
 
   console.log('☀️ Heurística da Subida ☀️ \n');
 
-  for (let i = 0; i < 4; i += i) {
-    while (paradas < 4) {
+  for (let i = 0; i < 3; i += i) {
+    while (paradas < 3) {
       const vizinho = geraNovosVizinhos(listaObjetosSorteio);
       const pesoTotalDoVizinho = geraPesoDosVizinhos(
         mochilaDosVizinhosComObjetos,
