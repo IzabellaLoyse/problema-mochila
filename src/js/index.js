@@ -1,28 +1,29 @@
 let quantidadeDeObjetos;
 let capacidadeDaMochila;
 
-let pesoDoObjeto = [];
-let beneficioDoObjeto = [];
-let listaObjetosSorteio = [];
-let novaListaObjetosSorteio = listaObjetosSorteio;
-let mochilaComObjetos = [];
-let novaMochilaComObjetos = mochilaComObjetos;
-let mochilaDosVizinhosComObjetos = [];
+const pesoDoObjeto = [];
+const beneficioDoObjeto = [];
+const listaObjetosSorteio = [];
+const mochilaComObjetos = [];
 
 const inserindoOsObjetos = () => {
-  quantidadeDeObjetos = parseInt(prompt('Insira a quantidade de objetos'));
-  capacidadeDaMochila = parseInt(prompt('Insira a capacidade da mochila'));
+  quantidadeDeObjetos = parseInt(prompt('Insira a quantidade de objetos'), 10);
+  capacidadeDaMochila = parseInt(prompt('Insira a capacidade da mochila'), 10);
 
   if (Number.isNaN(quantidadeDeObjetos) || Number.isNaN(capacidadeDaMochila)) {
     alert('Por favor, insira apenas números!');
     inserindoOsObjetos();
   }
 
-  for (let i = 0; i <= quantidadeDeObjetos - 1; i++) {
-    let listaPesoDosObjetos = parseInt(prompt('Insira o peso do objeto: ' + i));
+  for (let i = 0; i <= quantidadeDeObjetos - 1; i += 1) {
+    const listaPesoDosObjetos = parseInt(
+      prompt(`Insira o peso do objeto: ${i}`),
+      10,
+    );
 
-    let listageraBeneficioDosObjetos = parseInt(
-      prompt('Insira o beneficio do objeto: ' + i),
+    const listageraBeneficioDosObjetos = parseInt(
+      prompt(`Insira o beneficio do objeto: ${i}`),
+      10,
     );
 
     pesoDoObjeto.push(listaPesoDosObjetos);
@@ -33,7 +34,7 @@ const inserindoOsObjetos = () => {
 inserindoOsObjetos();
 
 const gerarSorteioDaMochila = () => {
-  for (let i = 0; i <= quantidadeDeObjetos - 1; i++) {
+  for (let i = 0; i <= quantidadeDeObjetos - 1; i += 1) {
     const sorteio = Math.floor(Math.random() * 2);
 
     if (sorteio === 0) {
@@ -63,7 +64,7 @@ const geraBeneficioDosObjetos = (mochila = mochilaComObjetos) => {
   );
 
   if (beneficioTotalDaMochila > capacidadeDaMochila) {
-    beneficioTotalDaMochila = beneficioTotalDaMochila * -1;
+    beneficioTotalDaMochila *= -1;
   }
 
   return beneficioTotalDaMochila;
@@ -99,21 +100,19 @@ const geraPesoDosObjetos = () => {
   const alertaMochilaCheia = document.querySelector('.js-mensagemErro');
   let pesoTotalDaMochila;
 
-  const listaPeso = mochilaComObjetos.map((objeto) => {
-    return pesoDoObjeto[objeto];
-  });
+  const listaPeso = mochilaComObjetos.map((objeto) => pesoDoObjeto[objeto]);
 
   pesoTotalDaMochila = listaPeso.reduce((total, peso) => total + peso, 0);
 
   if (pesoTotalDaMochila > capacidadeDaMochila) {
-    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = `
+    alertaMochilaCheia.innerHTML = `
       <p class="js-alert-mochila">
       🚨 A mochila está cheia 🚨
-      </p> 
+      </p>
       `;
-    pesoTotalDaMochila = pesoTotalDaMochila * -1;
+    pesoTotalDaMochila *= -1;
   } else {
-    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = '';
+    alertaMochilaCheia.innerHTML = '';
   }
 
   exibeResultadoDaMochila(mochilaComObjetos, pesoTotalDaMochila);
@@ -124,8 +123,8 @@ const geraPesoDosObjetos = () => {
 geraPesoDosObjetos();
 
 const exibeResultadosMochilaRefinamento = (
-  listaObjetosSorteio,
-  mochilaComObjetos,
+  listaObjetosSorteioRefinamento,
+  mochilaComObjetosRefinamento,
   beneficioTotalDaMochila,
 ) => {
   document.querySelector(
@@ -146,11 +145,11 @@ const exibeResultadosMochilaRefinamento = (
 
   document.querySelector(
     '#js-objetosSorteioRefinamento',
-  ).textContent = `${listaObjetosSorteio}`;
+  ).textContent = `${listaObjetosSorteioRefinamento}`;
 
   document.querySelector(
     '#js-indiceObjetosRefinamento',
-  ).textContent = `${mochilaComObjetos}`;
+  ).textContent = `${mochilaComObjetosRefinamento}`;
 
   document.querySelector(
     '#js-beneficioTotalRefinamento',
@@ -166,9 +165,7 @@ const refinamentoVizinhoDoSorteio = () => {
   const mochilaComObjetosRefinamento = [];
   const listaSorteioRefinamento = [];
 
-  listaObjetosSorteio.map((objeto) => {
-    listaSorteioRefinamento.push(objeto);
-  });
+  listaObjetosSorteio.map((objeto) => listaSorteioRefinamento.push(objeto));
 
   const geraSorteioPosicao = Math.floor(
     Math.random() * listaSorteioRefinamento.length,
@@ -194,15 +191,14 @@ const refinamentoVizinhoDoSorteio = () => {
   );
 
   if (beneficioTotalDaMochilaRefinamento > capacidadeDaMochila) {
-    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = `
+    alertaMochilaCheia.innerHTML = `
       <p class="js-alert-mochila">
       🚨 A mochila está cheia 🚨
       </p>
       `;
-    beneficioTotalDaMochilaRefinamento =
-      beneficioTotalDaMochilaRefinamento * -1;
+    beneficioTotalDaMochilaRefinamento *= -1;
   } else {
-    exibeMensagemMochilaCheia = alertaMochilaCheia.innerHTML = '';
+    alertaMochilaCheia.innerHTML = '';
   }
 
   exibeResultadosMochilaRefinamento(

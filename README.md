@@ -14,9 +14,14 @@
 - Em NodeJS: **script.js**
 - Web: **index.js**
 
+**Na Versão Web o problema da Mochila consiste na solução inicial gerada e na heurística de refinamento**
+
 ## 👥 Integrantes
 
 - Izabella Loyse - 8º Período
+- Jade Emanoelhe - 6º Período
+- Dilsimeyre Sander - 5º Período
+- Gabriel Marcos - 6º Período
 
 ## ⚙️ Tecnologias Utilizadas
 
